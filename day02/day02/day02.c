@@ -16,6 +16,7 @@ int main() {
     printf("두 번째 숫자를 입력하세요: ");
     scanf_s("%lf", &num2);
 
+    // if 보다 효율적인 switch 문 사용
     switch (choice) {
     case 1:
         result = num1 + num2;
