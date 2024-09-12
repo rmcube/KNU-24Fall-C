@@ -16,21 +16,19 @@ int main() {
     printf("두 번째 숫자를 입력하세요: ");
     scanf_s("%lf", &num2);
 
-    // if 보다 효율적인 switch 문 사용
-    switch (choice) {
-    case 1:
+    if (choice == 1) {
         result = num1 + num2;
         printf("결과: %lf\n", result);
-        break;
-    case 2:
+    }
+    else if (choice == 2) {
         result = num1 - num2;
         printf("결과: %lf\n", result);
-        break;
-    case 3:
+    }
+    else if (choice == 3) {
         result = num1 * num2;
         printf("결과: %lf\n", result);
-        break;
-    case 4:
+    }
+    else if (choice == 4) {
         if (num2 != 0) {
             result = num1 / num2;
             printf("결과: %lf\n", result);
@@ -38,10 +36,10 @@ int main() {
         else {
             printf("오류: 0으로 나눌 수 없습니다.\n");
         }
-        break;
-    default:
-        printf("잘못된 선택입니다.\n");
-        break;
     }
+    else {
+        printf("잘못된 선택입니다.\n");
+    }
+
     return 0;
 }
