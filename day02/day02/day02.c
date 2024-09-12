@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-int main() {
+int main2() {
     int choice;
     double num1, num2, result;
 
