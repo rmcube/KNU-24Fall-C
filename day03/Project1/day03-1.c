@@ -2,7 +2,7 @@
 
 int Prime_Tester(int prime); // 메인함수보다 먼저 선언해야함, 그래서 저렇게 선언함.
 
-int main() {
+int main2() {
     printf("소수인지 확인할 수를 입력하세요 : ");
     int meta = 0;
     scanf_s("%d", &meta);  
