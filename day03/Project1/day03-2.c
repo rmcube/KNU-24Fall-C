@@ -2,7 +2,7 @@
 
 int acc(int num); // 팩토리얼 함수 선언, main 함수보다 앞에 선언해야 합니다.
 
-int main() {
+int main3() {
     int number;
     printf("N! 팩토리얼 수를 입력 : ");
     scanf_s("%d", &number); // scanf 만 쓰면 작동하질 않네요...
