@@ -3,21 +3,21 @@
 #include <stdlib.h>
 #include <Windows.h>
 #include <time.h>
-#define OBSTACLE_COUNT_EASY 10
-#define OBSTACLE_COUNT_NORMAL 15
-#define OBSTACLE_COUNT_HARD 25
-#define FRUIT_COUNT 3
-#define MAX_TAIL_LENGTH 100
+#define OBSTACLE_COUNT_EASY 10 // 쉬움 모드 장애물 개수
+#define OBSTACLE_COUNT_NORMAL 15 // 보통 모드 장애물 개수
+#define OBSTACLE_COUNT_HARD 25 // 어려움 모드 장애물 개수
+#define FRUIT_COUNT 3 // 과일 개수
+#define MAX_TAIL_LENGTH 100 // 꼬리 최대 길이
 
-int i, j, height = 20, width = 40;
-int gameover, score;
+int i, j, height = 20, width = 40; // 맵 크기 40(가로) * 20(세로)
+int gameover, score; // 게임 기본 변수 [ 게임 오버 / 스코어 ]
 int x, y, fruitx, fruity, flag;
-char fruits[FRUIT_COUNT] = { '*', '&', '$' };
-int fruitScores[FRUIT_COUNT] = { 10, 20, 30 };
-int fruitTailLength[FRUIT_COUNT] = { 1, 2, 3 };
-char currentFruit;
-int tailX[MAX_TAIL_LENGTH], tailY[MAX_TAIL_LENGTH];
-int tailLength = 0;
+char fruits[FRUIT_COUNT] = { '*', '&', '$' }; // * = 1배수, & = 2배수, $ = 3배수 즉 과일 별 점수가 다름
+int fruitScores[FRUIT_COUNT] = { 10, 20, 30 }; // 과일 별 점수 차이를 주기 위함
+int fruitTailLength[FRUIT_COUNT] = { 1, 2, 3 }; // 과일 별 꼬리 늘어나는 개수를 차이 두기 위함
+char currentFruit; // 현재 꼬리에 대한 변수
+int tailX[MAX_TAIL_LENGTH], tailY[MAX_TAIL_LENGTH]; // 꼬리 X축과 Y축에 대한 변수
+int tailLength = 0; // 시작 꼬리 길이
 int obstacles[OBSTACLE_COUNT_HARD][2]; // 최대 장애물 수
 
 int obstacleCount; // 현재 장애물 수
@@ -25,7 +25,7 @@ int speed; // 이동 속도
 int level; // 현재 난이도
 int scoreMultiplier; // 점수 배율
 
-int isObstacle(int xi, int yi) {
+int isObstacle(int xi, int yi) {  // 해당 위치가 장애물이라면 1을 리턴, 아니라면 0을 리턴
     for (int k = 0; k < obstacleCount; k++) {
         if (obstacles[k][0] == xi && obstacles[k][1] == yi)
             return 1;
@@ -33,14 +33,12 @@ int isObstacle(int xi, int yi) {
     return 0;
 }
 
-void generateObstacles() {
+void generateObstacles() { // 게임 초기에 장애물을 배치하는 함수
     int count = 0;
-    while (count < obstacleCount) {
-        int xi = rand() % (height - 2) + 1; // 장애물 Y 위치
-        int yi = rand() % (width - 2) + 1; // 장애물 X 위치
-
-        // 장애물이 겹치지 않도록 확인
-        if (!isObstacle(xi, yi)) {
+    while (count < obstacleCount) { // 장애물 개수 와일문
+        int xi = rand() % (height - 2) + 1; // 장애물 Y 위치 (랜덤값)
+        int yi = rand() % (width - 2) + 1; // 장애물 X 위치 (랜덤값)
+        if (!isObstacle(xi, yi)) { // 장애물이 겹치지 않도록 확인
             obstacles[count][0] = xi;
             obstacles[count][1] = yi;
             count++;
@@ -62,33 +60,29 @@ void setup() {
     case 2:// 2를 선택할 경우 보통 단계
         obstacleCount = OBSTACLE_COUNT_NORMAL;
         speed = 100; // 보통 속도
-        scoreMultiplier = 2; // 점수 배율
+        scoreMultiplier = 2; // 점수 배율 보통은 2배
         break;
     case 3:// 3을 선택할 경우 어려움 단계
         obstacleCount = OBSTACLE_COUNT_HARD;
         speed = 50; // 빠른 속도
-        scoreMultiplier = 4; // 점수 배율
+        scoreMultiplier = 4; // 점수 배율 어려움은 4배
         break;
     default:
-        printf("잘못된 난이도입니다! 기본값으로 보통으로 설정합니다.\n");
+        printf("잘못된 난이도입니다! 기본값으로 보통으로 설정합니다.\n"); // 잘못 입력하면 보통으로 시작
         obstacleCount = OBSTACLE_COUNT_NORMAL;
         speed = 100;
         scoreMultiplier = 2; // 점수 배율
         break;
     }
-
     do {
         x = rand() % (height - 2) + 1;
         y = rand() % (width - 2) + 1;
-    } while (isObstacle(x, y));
-
+    } while (isObstacle(x, y)); // 장애물이 아닌 곳에서 태어나기 위함
     do {
         fruitx = rand() % (height - 2) + 1;
         fruity = rand() % (width - 2) + 1;
-    } while (isObstacle(fruitx, fruity) || (fruitx == x && fruity == y));
-
+    } while (isObstacle(fruitx, fruity) || (fruitx == x && fruity == y)); // 장애물이 아닌 곳에서 열매를 생성하기 위함
     currentFruit = fruits[rand() % FRUIT_COUNT];
-
     score = 0;
     tailLength = 0;
     generateObstacles();
@@ -100,22 +94,22 @@ void draw() {
     for (i = 0; i < height; i++) {
         for (j = 0; j < width; j++) {
             if (i == 0 || i == height - 1 || j == 0 || j == width - 1) {
-                printf("#");
+                printf("#"); // 맵 출력
             }
             else if (i == x && j == y) {
-                printf("O");
+                printf("O"); // 본인 출력
             }
             else if (i == fruitx && j == fruity) {
-                printf("%c", currentFruit);
+                printf("%c", currentFruit); // 과일 출력
             }
             else if (isObstacle(i, j)) {
-                printf("X");
+                printf("X"); // 장애물 출력 
             }
             else {
                 int isTail = 0;
                 for (int k = 0; k < tailLength; k++) {
                     if (i == tailX[k] && j == tailY[k]) {
-                        printf("o");
+                        printf("o"); // 꼬리 출력
                         isTail = 1;
                         break;
                     }
@@ -127,29 +121,29 @@ void draw() {
         }
         printf("\n");
     }
-    printf("점수: %d\n", score);
-    printf("게임을 종료하려면 'X'를 누르세요\n");
+    printf("점수: %d\n", score); // 점수 출력 
+    printf("게임을 종료하려면 'X'를 누르세요\n"); // X를 누르면 게임이 종료되도록
 }
 
 void input() {
     if (_kbhit()) {
         switch (getch()) {
-        case 'a': flag = 1; break; // 왼쪽
-        case 's': flag = 2; break; // 아래
-        case 'd': flag = 3; break; // 오른쪽
-        case 'w': flag = 4; break; // 위
-        case 'x': gameover = 1; break; // 종료
+        case 'a': flag = 1; break; // 왼쪽 방향
+        case 's': flag = 2; break; // 아래 방향
+        case 'd': flag = 3; break; // 오른쪽 방향
+        case 'w': flag = 4; break; // 위쪽 방향
+        case 'x': gameover = 1; break; // 종료하기
         }
     }
 }
 
 void logic() {
     Sleep(speed); // 난이도에 따라 속도 조절
-    int prevX = x;
-    int prevY = y;
+    int prevX = x; // 전 x위치 지정
+    int prevY = y; // 전 y위치 지정
     int prev2X, prev2Y;
 
-    for (int k = 0; k < tailLength; k++) {
+    for (int k = 0; k < tailLength; k++) { // 꼬리 이동하기 위함 x y에 따라서 유동적으로 변환시켜줘야함이 있음
         prev2X = tailX[k];
         prev2Y = tailY[k];
         tailX[k] = prevX;
@@ -159,13 +153,13 @@ void logic() {
     }
 
     switch (flag) {
-    case 1: y--; break; // 왼쪽
-    case 2: x++; break; // 아래
-    case 3: y++; break; // 오른쪽
-    case 4: x--; break; // 위
+    case 1: y--; break; // 왼쪽 방향
+    case 2: x++; break; // 아래 방향
+    case 3: y++; break; // 오른쪽 방향
+    case 4: x--; break; // 위쪽 방향
     }
 
-    if (x <= 0 || x >= height - 1 || y <= 0 || y >= width - 1 || isObstacle(x, y)) {
+    if (x <= 0 || x >= height - 1 || y <= 0 || y >= width - 1 || isObstacle(x, y)) { // 장애물에 걸렸거나, 자기 몸에 부딪혔거나, 맵 밖으로 나갔거나 등
         gameover = 1;
     }
 
@@ -176,7 +170,7 @@ void logic() {
         }
     }
 
-    if (x == fruitx && y == fruity) {
+    if (x == fruitx && y == fruity) { // 과일을 먹었을 경우
         for (int k = 0; k < FRUIT_COUNT; k++) {
             if (currentFruit == fruits[k]) {
                 score += fruitScores[k] * scoreMultiplier; // 점수 배율 적용
@@ -193,7 +187,7 @@ void logic() {
         currentFruit = fruits[rand() % FRUIT_COUNT];
     }
 
-    if (score >= 1000) {
+    if (score >= 1000) { // 1000점을 넘기면 게임을 끝나도록 함
         printf("\n너가 이겼어! 점수는 %d입니다.\n", score);
         gameover = 1;
     }
@@ -204,20 +198,21 @@ void restartGame() {
     printf("다시 플레이 하시겠습니까? (y/n): ");
     scanf_s(" %c", &choice);
     if (choice == 'y' || choice == 'Y') {
-        setup(); // 게임 재설정
+        setup(); // 게임 재시작
     }
     else {
         gameover = 1; // 게임 종료
     }
 }
-int Gaming() {
+int Gaming() { // 실제 게임 진행 메인 알고리즘
     while (!gameover) {
         draw();
         input();
         logic();
     }
+    return 0;
 }
-int main() {
+int main() { // 메인 알고리즘
     srand(time(NULL));
     setup();
     Gaming();
